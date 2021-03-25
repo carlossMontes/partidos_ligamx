@@ -26,20 +26,28 @@ url = "http://ligamx.net/cancha/informeArbitral/119522/eyJpZENsdWJsb2NhbCI6MTIwM
 page = requests.get(url, headers=headers)
 soup = BeautifulSoup(page.content, 'html.parser')
 
+# Se consigue el resultado e información de los goles a través de la clase marcada
+marcador = soup.findAll("span", {"class": "score"})
+marcador = marcador[0].get_text()
+marcador = marcador.split("-")
+total_goles = int(marcador[0]) + int(marcador[1])
+
 # Función para traer infomación de los goles
 def marcador_partido():
-    
     # Se consigue el resultado e información de los goles a través de la clase marcada
-    marcador = soup.findAll("span", {"class": "score"})
-    marcador = marcador[0].get_text()
     print("El marcador del partido fue", marcador)
-    marcador = marcador.split("-")
-    total_goles = int(marcador[0]) + int(marcador[1])
     print("El total de goles fue", total_goles)
 
 def goles_partido():
-    gol = soup.findAll("ul", {"class": "row lista-posiciones"})
-    print(gol)
+    gol = soup.findAll("div", {"class": "col-xs-2 minutoGol"})
+    anotador = soup.findAll("div", {"class": "col-xs-6"})
+    for i in range(total_goles):
+        minuto = gol[i].get_text()
+        print(minuto)
+
+    for i in range(total_goles):
+        anota = anotador[i + 2].get_text()
+        print(anota.lstrip().rstrip())
 
 marcador_partido()
-# goles_partido()
+goles_partido()
